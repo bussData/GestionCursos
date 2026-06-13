@@ -1,6 +1,5 @@
-package pe.edu.tecsup.lms.payment.application.eventHandler;
+package pe.edu.tecsup.lms.payment.application.eventhandler;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
@@ -9,18 +8,14 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import pe.edu.tecsup.lms.courses.domain.event.CoursePublishedEvent;
-import pe.edu.tecsup.lms.shared.infrastructure.dlq.DeadLetterQueue;
 
 import java.util.Random;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor  // Agregar constructor para inyección de dependencias
 public class PaymentEventHandler {
 
     private final Random random = new Random();
-    private final DeadLetterQueue dlq;  // Inyectar la DLQ
-
 
     @Async("eventExecutor")
     @EventListener
@@ -46,7 +41,6 @@ public class PaymentEventHandler {
     public void recover(RuntimeException e,  CoursePublishedEvent event ) {
         //
         log.error("All retries out for recover exception : {}", e.getMessage());
-        dlq.add(event, e);  // Agregar al final del metodo para listar la cola de msj de error en arraylist
     }
 
 }

@@ -1,4 +1,4 @@
-package pe.edu.tecsup.lms.courses.application.eventHandler;
+package pe.edu.tecsup.lms.notifications.application.eventhandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -7,12 +7,13 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import pe.edu.tecsup.lms.courses.domain.event.CoursePublishedEvent;
 
 import java.util.Random;
 
 @Slf4j
 @Component
-public class StudentEnrolledEventHandler {
+public class StudentEnrolledEvent {
 
     private final Random random = new Random();
 
@@ -23,21 +24,21 @@ public class StudentEnrolledEventHandler {
             maxAttempts = 2,  // Cantidad de reintentos
             backoff = @Backoff(delay = 1000,
                     multiplier = 2))
-    public void handleCourseCreated(StudentEnrolledEventHandler event) throws  InterruptedException{
-        log.info("Processing Student Enrollement ........ : {}", event);
+    public void handleStudentEnrolled(StudentEnrolledEvent event) throws  InterruptedException{
+        log.info("Processing enrollment ........ : {}", event);
 
         if (this.random.nextBoolean()) {
-            log.info("Processing Enrollement take longer times ........ : {}", event);
-            throw new RuntimeException("Enrollement failed");
+            log.info("Processing enrollment take longer times ........ : {}", event);
+            throw new RuntimeException("Enrollment failed");
         } else {
-            log.info("Enrollement successfully processed");
+            log.info("Enrollment successfully processed");
         }
-
     }
-
 
     @Recover
-    public void recover(RuntimeException e, StudentEnrolledEventHandler event){
-        log.error("All retries out for recover exception : {}", e.getMessage());
+    public void recover(RuntimeException e,  CoursePublishedEvent event ) {
+        //
+        log.error("All retries out for recover exception enrollment: {}", e.getMessage());
     }
+
 }
