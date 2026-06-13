@@ -1,6 +1,7 @@
 package pe.edu.tecsup.lms.enrollment.domain.event;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import pe.edu.tecsup.lms.enrollment.domain.model.Enrollment;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @ToString
+@Builder //necesario para los build()
 public class StudentEnrolledEvent extends DomainEvent {
     private Long studentId;
 
@@ -21,4 +23,8 @@ public class StudentEnrolledEvent extends DomainEvent {
     private Enrollment.EnrollmentStatus status;
 
     private LocalDateTime enrolledAt;
+
+    private String enrollmentId; //nuevo para Event Sourcing
+
+
 }

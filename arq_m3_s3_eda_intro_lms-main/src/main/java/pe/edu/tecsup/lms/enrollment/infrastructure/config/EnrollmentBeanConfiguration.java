@@ -8,8 +8,10 @@ import pe.edu.tecsup.lms.courses.application.PublishCourseUseCaseImpl;
 import pe.edu.tecsup.lms.courses.domain.repository.CourseRepository;
 import pe.edu.tecsup.lms.enrollment.application.EnrollStudentUseCase;
 import pe.edu.tecsup.lms.enrollment.application.EnrollStudentUseCaseImpl;
+import pe.edu.tecsup.lms.enrollment.application.command.EnrollmentCommandHandler;
 import pe.edu.tecsup.lms.enrollment.domain.repository.EnrollmentRepository;
 import pe.edu.tecsup.lms.shared.domain.event.EventPublisher;
+import pe.edu.tecsup.lms.shared.infrastructure.eventsourcing.MemoryEventStore;
 
 /**
  * CONFIGURACIÓN DE BEANS
@@ -25,6 +27,14 @@ public class EnrollmentBeanConfiguration {
 
         return new EnrollStudentUseCaseImpl(repository, eventPublisher);
 
+    }
+
+
+
+    //para Event Sourcing:
+    @Bean
+    public EnrollmentCommandHandler enrollmentCommandHandler(MemoryEventStore eventStore) {
+        return new EnrollmentCommandHandler(eventStore);
     }
 
 }

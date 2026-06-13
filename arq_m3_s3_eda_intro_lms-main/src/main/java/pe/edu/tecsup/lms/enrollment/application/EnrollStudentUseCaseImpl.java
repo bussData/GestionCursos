@@ -27,11 +27,12 @@ public class EnrollStudentUseCaseImpl implements EnrollStudentUseCase {
             // Crear el evento
             StudentEnrolledEvent event =
                     new StudentEnrolledEvent(
-                            saved.getStudentId(),
-                            saved.getCourseId(),
+                            Long.parseLong(saved.getStudentId().toString()),
+                            Long.parseLong(saved.getCourseId().toString()),
                             saved.getStudentEmail(),
                             saved.getStatus(),
-                            saved.getEnrolledAt());
+                            saved.getEnrolledAt(),
+                            saved.getId().toString());
 
             // Publicar el evento
             this.eventPublisher.publish(event);

@@ -2,11 +2,17 @@ package pe.edu.tecsup.lms.enrollment.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pe.edu.tecsup.lms.enrollment.domain.event.LessonCompletedEvent;
+import pe.edu.tecsup.lms.enrollment.domain.event.StudentEnrolledEvent;
+import pe.edu.tecsup.lms.shared.domain.event.DomainEvent;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Enrollment {
@@ -21,6 +27,8 @@ public class Enrollment {
     private EnrollmentStatus status;
 
     private LocalDateTime enrolledAt;
+
+    private int progressPercentage; //para Event Sourcing
 
     public static Enrollment create(
             Long studentId,
@@ -78,5 +86,36 @@ public class Enrollment {
         ACTIVE,
         COMPLETED,
         CANCELLED
+    }
+
+    //Inicio para event Sourcing:
+    public static Enrollment fromEvents(List<DomainEvent> events) {
+
+        Enrollment enrollment = new Enrollment();
+
+        for (DomainEvent event : events) {
+            enrollment.apply(event);
+        }
+        return enrollment;
+    }
+
+    private void apply(DomainEvent event) {
+
+        if (event instanceof StudentEnrolledEvent enrolledEvent) {
+            this.id = Long.parseLong(enrolledEvent.getEnrollmentId());
+            this.studentId = enrolledEvent.getStudentId();
+            //this.studentName = enrolledEvent.getStudentName();
+            this.studentEmail = enrolledEvent.getStudentEmail();
+            this.courseId = enrolledEvent.getCourseId();
+            //campos:
+            this.status = enrolledEvent.getStatus();
+            this.enrolledAt = enrolledEvent.getEnrolledAt();
+        } else if (event instanceof  LessonCompletedEvent lessonCompletedEvent) {
+                this.progressPercentage = lessonCompletedEvent.getNewProgressPercentage();
+        } else if (event instanceof  DomainEvent  domainEvent) {
+            // TO DO
+        }
+
+
     }
 }
